@@ -1,0 +1,91 @@
+======================================================================
+FACIAL AGE CLASSIFICATION & DEEP LEARNING BENCHMARK - FINAL REPORT
+======================================================================
+Student: Rahim Ullah (FA24-BSE-051)
+Institution: Mirpur University of Science and Technology (MUST)
+Project: Facial Age Categorization (YOUNG, MIDDLE, OLD)
+Status: Completed, Verified & Submission-Ready
+
+1. DATASET OVERVIEW (KAGGLE FACIAL AGE DATASET)
+----------------------------------------------------------------------
+• Source: Kaggle Facial Age Recognition Benchmark
+• Total Labeled Images: 19,906 face crops
+• Class Breakdown:
+    - MIDDLE: 10,804 images (54.28%)
+    - YOUNG:   6,706 images (33.69%)
+    - OLD:     2,396 images (12.04%)
+• Audit: 0 missing values, 0 duplicate records.
+
+2. FEATURE EXTRACTION & DIMENSIONALITY REDUCTION (PCA EIGENFACES)
+----------------------------------------------------------------------
+• Image Preprocessing: Grayscale conversion, 48x48 resize, [0, 1] min-max scaling.
+• Flat Feature Vector: 2,304 pixels.
+• Problem: Feeding 2,304 raw pixels causes p >> n curse of dimensionality, 
+  severe multicollinearity, singular covariance matrices, and negative R^2.
+• Solution: Extracted 60 orthogonal Eigenfaces capturing 90.31% facial variance.
+• Dimensionality Reduction Ratio: 97.4% reduction without losing facial structure.
+
+3. MODEL 1: ORDINAL RIDGE REGRESSION
+----------------------------------------------------------------------
+• Mathematical Formulation:
+    y in {0 (YOUNG), 1 (MIDDLE), 2 (OLD)}
+    Loss = ||y - Xw||^2 + alpha * ||w||^2  (alpha = 30.0)
+• Regression Metrics:
+    - R² Score: +0.1923 (Positive, well-conditioned, captures 19.2% variance)
+    - RMSE:     0.5750 (~0.57 age category step error)
+    - MAE:      0.4623 (Under half a category average error)
+• Rounded Classification:
+    - Overall Accuracy:  57.40%
+    - Balanced Accuracy: 38.74%
+    - Macro F1-Score:    0.3581
+    - Training Time:     0.01 seconds
+
+4. MODEL 2: BALANCED RANDOM FOREST CLASSIFIER
+----------------------------------------------------------------------
+• Hyperparameters: 150 decision trees, max_depth 15, class_weight='balanced'.
+• Balanced Cost Function: w_j = N / (K * N_j).
+• Classification Metrics:
+    - Overall Accuracy:  55.80%
+    - Balanced Accuracy: 50.42% (Unbiased across cohorts)
+    - Macro F1-Score:    0.4983
+    - OLD Recall:        35.00%
+    - Training Time:     0.89 seconds
+
+5. MODEL 3: DEEP CONVOLUTIONAL NEURAL NETWORK (CNN)
+----------------------------------------------------------------------
+• Architecture:
+    - Input: (Batch, 1, 48, 48) Grayscale Face Tensor
+    - Block 1: Conv2D(32, 3x3) + BatchNorm + ReLU + MaxPool(2x2) + Dropout(0.20)
+    - Block 2: Conv2D(64, 3x3) + BatchNorm + ReLU + MaxPool(2x2) + Dropout(0.25)
+    - Block 3: Conv2D(128, 3x3) + BatchNorm + ReLU + MaxPool(2x2) + Dropout(0.30)
+    - Classifier: Flatten(4608) -> Linear(128) + BatchNorm + ReLU + Dropout(0.40) -> Linear(3)
+• Training: 12 Epochs, Adam optimizer (lr=0.001, CosineAnnealingLR), Sqrt-Smoothed Cross-Entropy Loss.
+• Metrics:
+    - Overall Accuracy:  63.00% (HIGHEST of all models!)
+    - Balanced Accuracy: 60.47% (HIGHEST of all models!)
+    - Macro F1-Score:    0.5810 (HIGHEST of all models!)
+    - YOUNG Recall:      70.24%
+    - MIDDLE Recall:     62.13%
+    - OLD Recall:        50.00%
+    - Training Time:     157.43s on CPU (<15s on GPU)
+
+6. 3-WAY COMPARATIVE BENCHMARK SUMMARY
+----------------------------------------------------------------------
+Model Paradigm       Feature Strategy  Overall Acc  Balanced Acc  Macro F1  Train Time
+----------------------------------------------------------------------------------
+Ridge Regression     60 PCA Eigenfaces      57.40%        38.74%    0.3581       0.00s
+Random Forest        60 PCA Eigenfaces      55.80%        50.42%    0.4983       0.89s
+Deep CNN (PyTorch)   Hierarchical Conv      63.00%        60.47%    0.5810     157.43s
+----------------------------------------------------------------------------------
+
+7. GENERATED VISUAL ARTIFACTS (IN processed/)
+----------------------------------------------------------------------
+• graph0_sample_faces.png                - 9 Sample face crops across 3 cohorts
+• graph1_class_distribution.png          - Dataset frequency and percentage breakdown
+• graph2_rf_confusion_matrix.png         - Balanced Random Forest confusion matrix
+• graph3_regression_analysis.png         - Actual vs. continuous predicted & residuals
+• graph4_regression_confusion_matrix.png - Rounded regression classification matrix
+• graph5_cnn_training_curves.png         - CNN Loss and Accuracy learning curves
+• graph6_cnn_confusion_matrix.png         - Deep Learning CNN confusion matrix
+• graph7_model_comparison_benchmark.png  - 3-Way Comparative Benchmark Bar Chart
+======================================================================

@@ -1,0 +1,32 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Large Datasets & Archives (Excluded to keep repository fast & lightweight)
+archive/
+faces/
+*.zip
+*.tar.gz
+*.7z
+
+# Cache & Temporary Files
+.ipynb_checkpoints/
+*.tmp
+*.temp
+*_latest.*
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
